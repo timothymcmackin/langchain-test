@@ -128,6 +128,16 @@ ollama._types.ResponseError: This server does not support embeddings. Start it w
 
 
 
+https://docs.langchain.com/oss/python/langchain/sql-agent
+
+- HuggingFace tab example uses `init_chat_model("microsoft/Phi-3-mini-4k-instruct", model_provider="huggingface", ...)`
+- this resolves to `ChatHuggingFace.from_model_id(...)`, whose default backend downloads the model and runs it entirely locally via `transformers.pipeline(...)` — no HF token needed, the placeholder `"hf_..."` value in the example doesn't error, which is misleading
+- the bigger problem: `ChatHuggingFace.bind_tools()` docs say it "assumes model is compatible with OpenAI tool-calling API" — Phi-3-mini-4k-instruct isn't, so `create_agent`'s tool-calling loop never fires
+- result: no error at all, just silently wrong output — the agent answers directly in plain text on the first turn (no `Tool call:` lines), and hallucinates a generic schema (`tracks`, `genres`, `t.duration`, `t.genre_id`) instead of the real Chinook schema (`Track`, `Genre`, `Milliseconds`, `GenreId`)
+- doc does say "Select a model that supports tool-calling" and that the example output shown used OpenAI, but doesn't flag that the HuggingFace tab's default (local pipeline) backend does not meet that requirement
+- fix: switch to a tool-calling-capable model, e.g. `init_chat_model("qwen3", model_provider="ollama", temperature=0.7)` — confirmed working, agent calls tools and produces the same final answer as the doc's OpenAI example (Sci Fi & Fantasy, ~2,911,783 ms avg)
+- minor separate issue even with qwen3: it called `sql_db_schema` three times with the wrong argument name (`tables` instead of the tool's actual param `table_names`), each returning `None` silently, before eventually recovering and using the correct query — worth knowing tool-arg mismatches can fail silently rather than erroring loudly
+
 ## Need to qualify what things are
 
 Once we’ve instantiated a VectorStore that contains documents, we can query it. VectorStore includes methods for querying:
