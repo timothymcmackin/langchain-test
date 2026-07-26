@@ -95,3 +95,33 @@ embedding = embeddings.embed_query("How were Nike's margins impacted in 2023?")
 results = vector_store.similarity_search_by_vector(embedding)
 print(results[0])
 
+from langchain_core.runnables import chain
+
+
+@chain
+def retriever(query: str) -> list[Document]:
+    return vector_store.similarity_search(query, k=1)
+
+
+results = retriever.batch(
+    [
+        "How many distribution centers does Nike have in the US?",
+        "When was Nike incorporated?",
+    ],
+)
+
+print(results)
+
+retriever = vector_store.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 1},
+)
+
+results = retriever.batch(
+    [
+        "How many distribution centers does Nike have in the US?",
+        "When was Nike incorporated?",
+    ],
+)
+
+print(results)
