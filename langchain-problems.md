@@ -112,3 +112,27 @@ https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph#testing-th
 could not complete; code in thinking_in but maybe I didn't copy something or it's supposed to be in a different file?
 
 Claude had to do several things including installing dependencies to get this to work.
+
+
+
+https://docs.langchain.com/oss/python/deepagents/rag#select-an-embeddings-model
+
+- example uses `OllamaEmbeddings(model="llama3")` — llama3 is a chat model, not an embedding model
+- got this error:
+
+ollama._types.ResponseError: This server does not support embeddings. Start it with `--embeddings` (status code: 501)
+
+- fix: `ollama pull nomic-embed-text`, then `OllamaEmbeddings(model="nomic-embed-text")`
+
+
+
+
+
+## Need to qualify what things are
+
+Once we’ve instantiated a VectorStore that contains documents, we can query it. VectorStore includes methods for querying:
+
+https://docs.langchain.com/oss/python/langchain/knowledge-base#seeding-the-vector-store
+
+What's a vectorstore? could be a lot of things based on the context
+
