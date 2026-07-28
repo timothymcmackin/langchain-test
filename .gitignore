@@ -7,3 +7,5 @@ venv/
 .env
 nke-10k-2023.pdf
 Chinook.db
+node_modules/
+dist/

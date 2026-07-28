@@ -146,3 +146,11 @@ https://docs.langchain.com/oss/python/langchain/knowledge-base#seeding-the-vecto
 
 What's a vectorstore? could be a lot of things based on the context
 
+## langsmith quickstart
+
+https://docs.langchain.com/langsmith/observability-quickstart
+
+If you are using Anthropic, use the Anthropic wrapper. If you are using Google Gemini, use the Gemini wrapper. For other providers, use the @traceable decorator to trace calls manually.
+
+Not sure what these wrappers are or whether I should create them; they're not a step in the instructions -- needs t oeb a task about wrapping a langchain/graph app with smith
+
