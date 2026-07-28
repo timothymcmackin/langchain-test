@@ -1,5 +1,6 @@
 import openai
 from langsmith.wrappers import wrap_openai
+from langsmith import traceable
 
 # client = wrap_openai(OpenAI())
 client = wrap_openai(openai.OpenAI(base_url="http://localhost:11434/v1", api_key="ollama"))
@@ -13,6 +14,7 @@ docs = [
 def retriever(query: str) -> list[str]:
     return docs
 
+@traceable(name="Support bot")
 def support_bot(question: str) -> str:
     context = retriever(question)
     system_message = (
