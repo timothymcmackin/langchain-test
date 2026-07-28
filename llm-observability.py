@@ -1,6 +1,6 @@
 import openai
 from langsmith.wrappers import wrap_openai
-from langsmith import traceable
+from langsmith import traceable, Client, uuid7  
 
 # client = wrap_openai(OpenAI())
 client = wrap_openai(openai.OpenAI(base_url="http://localhost:11434/v1", api_key="ollama"))
@@ -11,6 +11,7 @@ docs = [
     "API rate limits are 1,000 requests per hour on the Starter plan and 10,000 requests per hour on Enterprise.",
 ]
 
+@traceable(run_type="retriever")
 def retriever(query: str) -> list[str]:
     return docs
 
@@ -33,4 +34,10 @@ def support_bot(question: str) -> str:
     return response.choices[0].message.content
 
 if __name__ == "__main__":
-    print(support_bot("How many users can I have on the Starter plan?"))
+    run_id = str(uuid7())
+    print(support_bot(
+        "How many users can I have on the Starter plan?",
+        langsmith_extra={"run_id": run_id},
+    ))
+    ls_client = Client()
+    ls_client.create_feedback(run_id, key="user-score", score=1.0)
